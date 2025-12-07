@@ -1,14 +1,33 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { verifyOTP, sendOTPEmail } from "../services/emailService";
 
 const LoginOTPVerification = ({ email, onBack, credentials }) => {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
+  const [devOTP, setDevOTP] = useState(null); // Store OTP for dev mode display
   const navigate = useNavigate();
   const { completeLogin } = useContext(AuthContext);
+
+  // Send OTP on component mount
+  useEffect(() => {
+    const sendInitialOTP = async () => {
+      try {
+        const result = await sendOTPEmail(email, 'login');
+        // If in dev/fallback mode, store OTP for display
+        if (result.fallback && result.otp) {
+          setDevOTP(result.otp);
+        }
+      } catch (err) {
+        console.error("Error sending initial OTP:", err);
+      }
+    };
+    sendInitialOTP();
+  }, [email]);
 
   // Timer for OTP expiration
   useEffect(() => {
@@ -51,22 +70,24 @@ const LoginOTPVerification = ({ email, onBack, credentials }) => {
 
     setLoading(true);
     try {
-      // Simulate OTP verification
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Verify OTP
+      const verification = verifyOTP(email, otp);
+      
+      if (!verification.valid) {
+        setError(verification.error || "Invalid OTP");
+        setLoading(false);
+        return;
+      }
 
-      // For demo: accept any 6-digit code
-      if (/^\d{6}$/.test(otp)) {
-        const result = await completeLogin(
-          credentials.email,
-          credentials.password
-        );
-        if (result.success) {
-          navigate("/");
-        } else {
-          setError("Failed to complete login");
-        }
+      // OTP is valid, complete login
+      const result = await completeLogin(
+        credentials.email,
+        credentials.password
+      );
+      if (result.success) {
+        navigate("/", { replace: true });
       } else {
-        setError("Invalid OTP format");
+        setError(result.error || "Failed to complete login");
       }
     } catch (err) {
       setError("An error occurred during OTP verification");
@@ -78,16 +99,31 @@ const LoginOTPVerification = ({ email, onBack, credentials }) => {
   const handleResendOTP = async () => {
     setError("");
     setOtp("");
-    setLoading(true);
+    setResending(true);
     try {
-      // Simulate resending OTP
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setTimeLeft(300);
-      // In real app, send OTP to email again
+      const result = await sendOTPEmail(email, 'login');
+      if (result.success) {
+        setTimeLeft(300);
+        setError(""); // Clear any previous errors
+        // If in dev/fallback mode, store OTP for display
+        if (result.fallback && result.otp) {
+          setDevOTP(result.otp);
+        } else {
+          setDevOTP(null); // Clear dev OTP if real email was sent
+        }
+        // Show success message briefly
+        if (result.fallback) {
+          // Don't show alert in dev mode, OTP is already visible on screen
+        } else {
+          alert("OTP sent successfully to your email");
+        }
+      } else {
+        setError("Failed to resend OTP. Please try again.");
+      }
     } catch (err) {
-      setError("Failed to resend OTP");
+      setError("Failed to resend OTP. Please try again.");
     } finally {
-      setLoading(false);
+      setResending(false);
     }
   };
 
@@ -108,6 +144,24 @@ const LoginOTPVerification = ({ email, onBack, credentials }) => {
         <p className="text-center mb-6" style={{ color: "#53629E" }}>
           Enter the OTP sent to <strong>{email}</strong>
         </p>
+
+        {/* Development Mode - Show OTP on screen */}
+        {devOTP && (
+          <div className="mb-4 p-4 rounded-lg border-2 border-dashed" style={{ 
+            backgroundColor: "#FFF3CD", 
+            borderColor: "#FFC107",
+            color: "#856404"
+          }}>
+            <p className="text-center font-bold text-lg mb-2">🔐 Development Mode</p>
+            <p className="text-center text-sm mb-2">EmailJS not configured. Your OTP is:</p>
+            <p className="text-center font-mono text-2xl font-bold" style={{ color: "#473472" }}>
+              {devOTP}
+            </p>
+            <p className="text-center text-xs mt-2">
+              To receive real emails, configure EmailJS (see EMAILJS_SETUP.md)
+            </p>
+          </div>
+        )}
 
         {error && (
           <div
@@ -171,19 +225,19 @@ const LoginOTPVerification = ({ email, onBack, credentials }) => {
         <div className="mt-6 space-y-2">
           <button
             onClick={handleResendOTP}
-            disabled={loading}
-            className="w-full text-center font-semibold py-2 rounded-lg transition"
+            disabled={loading || resending}
+            className="w-full text-center font-semibold py-2 rounded-lg transition disabled:opacity-50"
             style={{
               color: "#53629E",
               backgroundColor: "transparent",
               border: "2px solid #53629E",
             }}
-            onMouseEnter={(e) => (e.target.style.backgroundColor = "#D6F4ED")}
+            onMouseEnter={(e) => !resending && (e.target.style.backgroundColor = "#D6F4ED")}
             onMouseLeave={(e) =>
               (e.target.style.backgroundColor = "transparent")
             }
           >
-            Resend OTP
+            {resending ? "Sending..." : "Resend OTP"}
           </button>
 
           <button

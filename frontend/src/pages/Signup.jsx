@@ -60,18 +60,19 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      const result = await signup(formData.name, formData.email, formData.password);
-      if (result.success) {
-        // Signup successful, wait a moment for state to update then navigate to home
-        setTimeout(() => {
-          navigate("/", { replace: true, state: { message: "Account created successfully! Welcome to BolSaathi." } });
-        }, 100);
+      // Send OTP email first
+      const { sendOTPEmail } = await import("../services/emailService");
+      const otpResult = await sendOTPEmail(formData.email, 'signup');
+      
+      if (otpResult.success) {
+        // Show OTP verification screen
+        setShowOTP(true);
       } else {
-        setError(result.error || "Signup failed");
-        setLoading(false);
+        setError("Failed to send OTP. Please try again.");
       }
     } catch (err) {
-      setError("An error occurred during signup");
+      setError("An error occurred. Please try again.");
+    } finally {
       setLoading(false);
     }
   };

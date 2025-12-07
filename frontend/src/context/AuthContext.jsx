@@ -114,6 +114,50 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
+  const completeSignup = async (signupData) => {
+    try {
+      const response = await authService.signup(signupData.name, signupData.email, signupData.password);
+      
+      if (response.success) {
+        // Store user details and token
+        if (response.data.user && response.data.token) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+          localStorage.setItem("authToken", response.data.token);
+          setUser(response.data.user);
+          setIsAuthenticated(true);
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
+        return { success: true, data: response.data };
+      } else {
+        return { success: false, error: response.error };
+      }
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const completeLogin = async (email, password) => {
+    try {
+      const response = await authService.login(email, password);
+      
+      if (response.success) {
+        // Store user profile and JWT token
+        if (response.data.user && response.data.token) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+          localStorage.setItem("authToken", response.data.token);
+          setUser(response.data.user);
+          setIsAuthenticated(true);
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
+        return { success: true, data: response.data };
+      } else {
+        return { success: false, error: response.error };
+      }
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
   const updateUserData = (newData) => {
     const updatedUser = { ...user, ...newData };
     localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -131,6 +175,8 @@ export const AuthProvider = ({ children }) => {
         logout,
         updateUserData,
         refreshUser,
+        completeSignup,
+        completeLogin,
       }}
     >
       {children}

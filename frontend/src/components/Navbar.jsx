@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Home, Layers, Languages, Info, Phone, ChevronDown, User, Menu } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import { AuthContext } from "../context/AuthContext";
 
 const navItems = [
   { name: "Home", icon: Home, path: "/", dropdown: [] },
@@ -14,12 +15,29 @@ const navItems = [
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // MOCK (make it real later)
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
+  
+  const isLoggedIn = isAuthenticated;
+  
+  const handleLogout = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    // Close menus first
+    setUserMenuOpen(false);
+    setMobileMenuOpen(false);
+    
+    // Navigate to logout route which will handle cleanup
+    navigate("/logout", { replace: true });
+  };
 
   const menuRef = useRef();
+  const userMenuRef = useRef();
 
   const handleNavigation = (path) => {
     if (path === location.pathname) {
@@ -39,8 +57,12 @@ export default function Navbar() {
   // Close dropdown when clicking outside
   useEffect(() => {
     function close(e) {
+      // Close navigation menu if clicking outside
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setOpenMenu(null);
+      }
+      // Close user menu if clicking outside
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
         setUserMenuOpen(false);
       }
     }
@@ -49,7 +71,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-[#060818] dark:bg-[#060818] bg-white/95 dark:bg-[#060818]/95 backdrop-blur-sm py-4 px-8 flex items-center justify-between shadow-xl z-50 border-b border-gray-200/10 dark:border-white/10">
+    <nav className="fixed top-0 left-0 w-full bg-white/95 dark:bg-[#060818]/95 backdrop-blur-sm py-4 px-8 flex items-center justify-between shadow-xl z-50 border-b border-gray-200 dark:border-white/10">
       
       {/* Logo */}
       <div 
@@ -73,8 +95,8 @@ export default function Navbar() {
               key={index}
               className={`relative group font-medium cursor-pointer ${
                 location.pathname === item.path
-                  ? "text-purple-400"
-                  : "text-white hover:text-purple-400"
+                  ? "text-purple-600 dark:text-purple-400"
+                  : "text-gray-700 dark:text-white hover:text-purple-600 dark:hover:text-purple-400"
               } transition-colors`}
               onMouseEnter={() => setOpenMenu(index)}
               onMouseLeave={() => setOpenMenu(null)}
@@ -119,35 +141,57 @@ export default function Navbar() {
             Get Started
           </button>
         ) : (
-          <div className="relative">
+          <div className="relative" ref={userMenuRef}>
             <div
               className="flex items-center gap-2 bg-gray-200 dark:bg-white/10 px-4 py-2 rounded-full cursor-pointer hover:bg-gray-300 dark:hover:bg-white/20 transition"
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setUserMenuOpen(!userMenuOpen);
+              }}
             >
               <User size={20} className="text-gray-900 dark:text-white" />
-              <span className="text-gray-900 dark:text-white">Manoj</span>
+              <span className="text-gray-900 dark:text-white">{user?.name || "User"}</span>
             </div>
 
             {userMenuOpen && (
-              <div className="absolute right-0 mt-3 bg-white dark:bg-[#0a0f2a] w-44 rounded-md border border-gray-200 dark:border-white/10 shadow-lg py-2">
-                <p
-                  className="px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer transition-colors"
-                  onClick={() => (window.location.href = "/profile")}
+              <div 
+                className="absolute right-0 mt-3 bg-white dark:bg-[#0a0f2a] w-44 rounded-md border border-gray-200 dark:border-white/10 shadow-lg py-2 z-50"
+              >
+                <button
+                  type="button"
+                  className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setUserMenuOpen(false);
+                    navigate("/profile");
+                  }}
                 >
                   Profile
-                </p>
-                <p
-                  className="px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer transition-colors"
-                  onClick={() => (window.location.href = "/settings")}
+                </button>
+                <button
+                  type="button"
+                  className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setUserMenuOpen(false);
+                    navigate("/settings");
+                  }}
                 >
                   Settings
-                </p>
-                <p
-                  className="px-4 py-2 bg-gradient-to-r from-blue-400 to-purple-500 text-white cursor-pointer hover:opacity-90 transition-opacity"
-                  onClick={() => (window.location.href = "/logout")}
+                </button>
+                <button
+                  type="button"
+                  className="w-full text-left px-4 py-2 bg-gradient-to-r from-blue-400 to-purple-500 text-white cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleLogout(e);
+                  }}
                 >
                   Logout
-                </p>
+                </button>
               </div>
             )}
           </div>
@@ -159,7 +203,7 @@ export default function Navbar() {
         <ThemeToggle />
         <Menu
           size={28}
-          className="text-white cursor-pointer"
+          className="text-gray-900 dark:text-white cursor-pointer"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         />
       </div>
@@ -233,7 +277,7 @@ export default function Navbar() {
               <p className="text-gray-700 dark:text-gray-300 py-2 cursor-pointer hover:text-gray-900 dark:hover:text-white transition-colors" onClick={() => (window.location.href = "/settings")}>
                 Settings
               </p>
-              <p className=" mt-4 bg-gradient-to-r from-blue-400 to-purple-500 text-white px-2 py-2 rounded-full font-semibold hover:scale-105 transition" onClick={() => (window.location.href = "/logout")}>
+              <p className=" mt-4 bg-gradient-to-r from-blue-400 to-purple-500 text-white px-2 py-2 rounded-full font-semibold hover:scale-105 transition cursor-pointer" onClick={handleLogout}>
                 Logout
               </p>
             </div>

@@ -5,17 +5,28 @@ This document describes how the frontend integrates with the BolSaathi backend A
 
 ## Base Configuration
 
-- **Base URL**: `https://localhost:5173`
+### Local Storage Mode (Default)
+- **No Backend Required** - Works entirely in the frontend
+- **Authentication**: Browser localStorage
+- **Perfect for**: Development and testing
+
+### API Mode
+- **Base URL**: `https://api.bolsaathi.com/api` (configurable)
 - **Authentication**: JWT Token in Authorization header
 - **Format**: `Authorization: Bearer <token>`
 - **Response Format**: JSON
 
 ## Environment Variables
 
+### For Local Development (Default)
+No configuration needed! The app runs in local storage mode automatically.
+
+### For API Mode
 Create a `.env` file in the `frontend` directory:
 
 ```env
 VITE_API_BASE_URL=https://api.bolsaathi.com/api
+VITE_USE_API_MODE=true
 ```
 
 ## API Services

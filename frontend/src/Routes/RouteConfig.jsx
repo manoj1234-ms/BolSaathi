@@ -7,6 +7,7 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 import Signup from "../pages/Signup";
 import Login from "../pages/Login";
+import Logout from "../pages/Logout";
 import { ProtectedRoute } from "../middleware/ProtectedRoute";
 
 const RouteConfig = () => {
@@ -54,6 +55,7 @@ const RouteConfig = () => {
       />
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/logout" element={<Logout />} />
     </Routes>
   );
 };
