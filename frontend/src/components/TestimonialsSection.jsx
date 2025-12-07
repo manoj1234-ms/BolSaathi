@@ -123,18 +123,18 @@ export default function TestimonialsSection() {
           {/* Navigation Arrows */}
           <button
             onClick={prevTestimonial}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 w-12 h-12 rounded-full bg-white dark:bg-[#0C0F1D] border border-gray-200 dark:border-white/10 shadow-lg flex items-center justify-center hover:bg-purple-500 hover:text-white transition-all duration-300 group"
+            className="absolute left-2 sm:left-0 top-1/2 -translate-y-1/2 sm:-translate-x-4 md:-translate-x-12 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white dark:bg-[#0C0F1D] border border-gray-200 dark:border-white/10 shadow-lg flex items-center justify-center active:bg-purple-500 active:text-white transition-all duration-300 group touch-manipulation"
             aria-label="Previous testimonial"
           >
-            <ChevronLeft className="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-white" />
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-400 group-active:text-white" />
           </button>
           
           <button
             onClick={nextTestimonial}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 w-12 h-12 rounded-full bg-white dark:bg-[#0C0F1D] border border-gray-200 dark:border-white/10 shadow-lg flex items-center justify-center hover:bg-purple-500 hover:text-white transition-all duration-300 group"
+            className="absolute right-2 sm:right-0 top-1/2 -translate-y-1/2 sm:translate-x-4 md:translate-x-12 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white dark:bg-[#0C0F1D] border border-gray-200 dark:border-white/10 shadow-lg flex items-center justify-center active:bg-purple-500 active:text-white transition-all duration-300 group touch-manipulation"
             aria-label="Next testimonial"
           >
-            <ChevronRight className="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-white" />
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-400 group-active:text-white" />
           </button>
 
           {/* Dots Indicator */}

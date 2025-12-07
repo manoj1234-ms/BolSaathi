@@ -83,18 +83,18 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <button 
               onClick={() => navigate("/lessons")}
-              className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full text-white font-bold text-lg shadow-xl shadow-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/60 hover:scale-105 transition-all duration-300 overflow-hidden"
+              className="group relative px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full text-white font-bold text-base sm:text-lg shadow-xl shadow-purple-500/50 active:shadow-2xl active:shadow-purple-500/60 active:scale-95 transition-all duration-300 overflow-hidden touch-manipulation min-h-[48px]"
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 Start Learning Free
-                <Zap className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 opacity-0 group-active:opacity-100 transition-opacity"></div>
             </button>
 
             <button 
               onClick={() => navigate("/features")}
-              className="px-8 py-4 rounded-full bg-white/90 dark:bg-white/5 backdrop-blur-xl text-gray-900 dark:text-white border-2 border-gray-300 dark:border-white/20 font-semibold text-lg hover:border-purple-400 dark:hover:border-purple-400 hover:scale-105 transition-all duration-300 shadow-lg"
+              className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white/90 dark:bg-white/5 backdrop-blur-xl text-gray-900 dark:text-white border-2 border-gray-300 dark:border-white/20 font-semibold text-base sm:text-lg active:border-purple-400 dark:active:border-purple-400 active:scale-95 transition-all duration-300 shadow-lg touch-manipulation min-h-[48px]"
             >
               Watch Demo →
             </button>

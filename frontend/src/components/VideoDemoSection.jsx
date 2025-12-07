@@ -35,11 +35,11 @@ export default function VideoDemoSection() {
               <div className="text-center z-10">
                 <button
                   onClick={() => setShowVideo(true)}
-                  className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform mb-6 group"
+                  className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-transform mb-4 sm:mb-6 group touch-manipulation"
                 >
-                  <Play className="w-10 h-10 text-white ml-1 group-hover:scale-110 transition-transform" />
+                  <Play className="w-8 h-8 sm:w-10 sm:h-10 text-white ml-1" />
                 </button>
-                <p className="text-gray-700 dark:text-gray-300 font-semibold">
+                <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-semibold">
                   Click to watch demo
                 </p>
               </div>
@@ -67,19 +67,19 @@ export default function VideoDemoSection() {
 
           {/* Video Features Overlay (when not playing) */}
           {!showVideo && (
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
-              <div className="grid grid-cols-3 gap-4 text-white">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 sm:p-6">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 text-white">
                 <div className="text-center">
-                  <p className="text-2xl font-bold">98%</p>
-                  <p className="text-sm opacity-90">AI Accuracy</p>
+                  <p className="text-xl sm:text-2xl font-bold">98%</p>
+                  <p className="text-xs sm:text-sm opacity-90">AI Accuracy</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold">22</p>
-                  <p className="text-sm opacity-90">Languages</p>
+                  <p className="text-xl sm:text-2xl font-bold">22</p>
+                  <p className="text-xs sm:text-sm opacity-90">Languages</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold">2-3</p>
-                  <p className="text-sm opacity-90">Months to Fluency</p>
+                  <p className="text-xl sm:text-2xl font-bold">2-3</p>
+                  <p className="text-xs sm:text-sm opacity-90">Months to Fluency</p>
                 </div>
               </div>
             </div>

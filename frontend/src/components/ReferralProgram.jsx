@@ -35,7 +35,7 @@ export default function ReferralProgram() {
 
         {/* Main Card */}
         <div className="bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-pink-500/10 backdrop-blur-xl border border-purple-500/20 rounded-3xl p-8 lg:p-12 shadow-2xl">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start md:items-center">
             {/* Left Side - Benefits */}
             <div>
               <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
@@ -100,14 +100,14 @@ export default function ReferralProgram() {
               </div>
 
               {/* Code Display */}
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-6 mb-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-white font-mono">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-4 sm:p-6 mb-6">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <span className="text-lg sm:text-2xl font-bold text-white font-mono break-all text-center sm:text-left">
                     {referralCode}
                   </span>
                   <button
                     onClick={copyToClipboard}
-                    className="bg-white text-purple-600 px-4 py-2 rounded-lg font-semibold hover:scale-105 transition-transform"
+                    className="bg-white text-purple-600 px-4 py-2.5 rounded-lg font-semibold hover:scale-105 active:scale-95 transition-transform min-w-[80px] touch-manipulation"
                   >
                     {copied ? "Copied!" : "Copy"}
                   </button>

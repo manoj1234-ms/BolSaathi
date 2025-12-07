@@ -11,6 +11,10 @@ export default function ExitIntentPopup() {
     const hasSeenPopup = localStorage.getItem("exitIntentShown");
     if (hasSeenPopup) return;
 
+    // Disable on mobile devices (no mouse)
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) return;
+
     const handleMouseLeave = (e) => {
       // Only trigger when mouse leaves from top of page
       if (e.clientY <= 0 && !showPopup) {

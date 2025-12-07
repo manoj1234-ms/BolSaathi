@@ -45,7 +45,7 @@ export default function PronunciationDemo() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 backdrop-blur-xl border border-purple-500/20 rounded-3xl p-8 shadow-2xl">
+    <div className="bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 backdrop-blur-xl border border-purple-500/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl">
       <div className="text-center mb-8">
         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Try AI Pronunciation Feedback
@@ -94,20 +94,20 @@ export default function PronunciationDemo() {
         <button
           onClick={handleRecord}
           disabled={isRecording || isAnalyzing}
-          className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${
+          className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all touch-manipulation ${
             isRecording
               ? "bg-red-500 animate-pulse"
               : isAnalyzing
               ? "bg-yellow-500"
-              : "bg-gradient-to-r from-blue-500 to-purple-500 hover:scale-110"
+              : "bg-gradient-to-r from-blue-500 to-purple-500 active:scale-95"
           } shadow-2xl disabled:opacity-50`}
         >
           {isRecording ? (
-            <Pause className="w-10 h-10 text-white" />
+            <Pause className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
           ) : isAnalyzing ? (
-            <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
           ) : (
-            <Mic className="w-10 h-10 text-white" />
+            <Mic className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
           )}
         </button>
 

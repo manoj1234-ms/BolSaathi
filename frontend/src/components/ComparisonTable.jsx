@@ -82,77 +82,79 @@ export default function ComparisonTable() {
 
         {/* Comparison Table */}
         <div className="bg-white/90 dark:bg-[#0C0F1D]/90 backdrop-blur-xl border border-gray-200 dark:border-white/5 rounded-3xl shadow-2xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-gray-200 dark:border-white/10">
-                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white">
-                    Features
-                  </th>
-                  <th className="px-6 py-4 text-center">
-                    <div className="flex flex-col items-center">
-                      <div className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-1">
-                        BolSaathi
+          <div className="overflow-x-auto -mx-2 sm:mx-0">
+            <div className="inline-block min-w-full align-middle px-2 sm:px-0">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-gray-200 dark:border-white/10">
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
+                      Features
+                    </th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-center">
+                      <div className="flex flex-col items-center">
+                        <div className="text-sm sm:text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-1">
+                          BolSaathi
+                        </div>
+                        <div className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs rounded-full font-semibold whitespace-nowrap">
+                          Recommended
+                        </div>
                       </div>
-                      <div className="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs rounded-full font-semibold">
-                        Recommended
-                      </div>
-                    </div>
-                  </th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-gray-600 dark:text-gray-400">
-                    Traditional Classes
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {features.map((item, index) => (
-                  <tr
-                    key={index}
-                    className="border-b border-gray-200 dark:border-white/5 hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
-                  >
-                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300 font-medium">
-                      {item.feature}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      {item.bolsaathi === true ? (
-                        <div className="flex justify-center">
-                          <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                            <Check className="w-5 h-5 text-green-500" />
-                          </div>
-                        </div>
-                      ) : item.bolsaathi === false ? (
-                        <div className="flex justify-center">
-                          <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
-                            <X className="w-5 h-5 text-red-500" />
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 font-bold">
-                          {item.bolsaathi}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-center text-gray-600 dark:text-gray-400">
-                      {item.traditional === true ? (
-                        <div className="flex justify-center">
-                          <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                            <Check className="w-5 h-5 text-green-500" />
-                          </div>
-                        </div>
-                      ) : item.traditional === false ? (
-                        <div className="flex justify-center">
-                          <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
-                            <X className="w-5 h-5 text-red-500" />
-                          </div>
-                        </div>
-                      ) : (
-                        <span>{item.traditional}</span>
-                      )}
-                    </td>
+                    </th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                      Traditional Classes
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {features.map((item, index) => (
+                    <tr
+                      key={index}
+                      className="border-b border-gray-200 dark:border-white/5 hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
+                    >
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium">
+                        {item.feature}
+                      </td>
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
+                        {item.bolsaathi === true ? (
+                          <div className="flex justify-center">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
+                            </div>
+                          </div>
+                        ) : item.bolsaathi === false ? (
+                          <div className="flex justify-center">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+                              <X className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-xs sm:text-sm text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 font-bold">
+                            {item.bolsaathi}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                        {item.traditional === true ? (
+                          <div className="flex justify-center">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
+                            </div>
+                          </div>
+                        ) : item.traditional === false ? (
+                          <div className="flex justify-center">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+                              <X className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-xs sm:text-sm">{item.traditional}</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* CTA Footer */}

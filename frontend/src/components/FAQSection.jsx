@@ -87,16 +87,16 @@ export default function FAQSection() {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
-                className="w-full px-6 py-5 flex items-center justify-between text-left group"
+                className="w-full px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between text-left group touch-manipulation min-h-[60px]"
               >
-                <span className="font-bold text-gray-900 dark:text-white text-lg pr-4 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                <span className="font-bold text-gray-900 dark:text-white text-base sm:text-lg pr-4 group-active:text-purple-600 dark:group-active:text-purple-400 transition-colors">
                   {faq.question}
                 </span>
                 <div className="flex-shrink-0">
                   {openIndex === index ? (
                     <ChevronUp className="w-5 h-5 text-purple-500" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-purple-500 transition-colors" />
+                    <ChevronDown className="w-5 h-5 text-gray-400 group-active:text-purple-500 transition-colors" />
                   )}
                 </div>
               </button>
@@ -118,7 +118,7 @@ export default function FAQSection() {
           </p>
           <button
             onClick={() => (window.location.href = "/contact")}
-            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform shadow-lg"
+            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 sm:px-8 py-3 rounded-full font-bold text-base sm:text-lg active:scale-95 transition-transform shadow-lg touch-manipulation min-h-[44px]"
           >
             Contact Support →
           </button>

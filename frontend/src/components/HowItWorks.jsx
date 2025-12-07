@@ -98,13 +98,13 @@ export default function HowItWorks() {
         </div>
 
         {/* CTA */}
-        <div className="mt-16 text-center">
+        <div className="mt-12 sm:mt-16 text-center">
           <button
             onClick={() => (window.location.href = "/signup")}
-            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-10 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-xl inline-flex items-center gap-2"
+            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 sm:px-10 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg active:scale-95 transition-transform shadow-xl inline-flex items-center gap-2 touch-manipulation min-h-[44px]"
           >
             Start Learning Now
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
       </div>

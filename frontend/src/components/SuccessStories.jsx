@@ -98,9 +98,9 @@ export default function SuccessStories() {
 
           {/* User Info */}
           <div className="flex flex-col md:flex-row items-start gap-6 mb-8">
-            <div className={`w-24 h-24 rounded-2xl bg-gradient-to-r ${currentStory.gradient} flex items-center justify-center text-white text-4xl font-bold shadow-lg flex-shrink-0`}>
-              {currentStory.image}
-            </div>
+              <div className={`w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-r ${currentStory.gradient} flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl font-bold shadow-lg flex-shrink-0`}>
+                {currentStory.image}
+              </div>
 
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
