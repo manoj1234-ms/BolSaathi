@@ -5,7 +5,7 @@ This document describes how the frontend integrates with the BolSaathi backend A
 
 ## Base Configuration
 
-- **Base URL**: `https://api.bolsaathi.com/api`
+- **Base URL**: `https://localhost:5173`
 - **Authentication**: JWT Token in Authorization header
 - **Format**: `Authorization: Bearer <token>`
 - **Response Format**: JSON

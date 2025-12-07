@@ -12,17 +12,30 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem("authToken");
+      const userStr = localStorage.getItem("user");
       
-      if (token) {
-        // Verify token by fetching user data
-        const response = await authService.getMe();
-        if (response.success) {
-          setUser(response.data);
-          setIsAuthenticated(true);
-        } else {
-          // Token invalid, clear storage
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("user");
+      if (token && userStr) {
+        try {
+          // Verify token by fetching user data
+          const response = await authService.getMe();
+          if (response.success) {
+            setUser(response.data);
+            setIsAuthenticated(true);
+          } else {
+            // Token invalid, clear storage
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("user");
+          }
+        } catch (error) {
+          // If getMe fails, try to use stored user data
+          try {
+            const storedUser = JSON.parse(userStr);
+            setUser(storedUser);
+            setIsAuthenticated(true);
+          } catch {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("user");
+          }
         }
       }
       setLoading(false);
@@ -40,8 +53,11 @@ export const AuthProvider = ({ children }) => {
         if (response.data.user && response.data.token) {
           localStorage.setItem("user", JSON.stringify(response.data.user));
           localStorage.setItem("authToken", response.data.token);
+          // Update state synchronously
           setUser(response.data.user);
           setIsAuthenticated(true);
+          // Force a small delay to ensure state is updated
+          await new Promise(resolve => setTimeout(resolve, 50));
         }
         return { success: true, data: response.data };
       } else {
@@ -61,8 +77,11 @@ export const AuthProvider = ({ children }) => {
         if (response.data.user && response.data.token) {
           localStorage.setItem("user", JSON.stringify(response.data.user));
           localStorage.setItem("authToken", response.data.token);
+          // Update state synchronously
           setUser(response.data.user);
           setIsAuthenticated(true);
+          // Force a small delay to ensure state is updated
+          await new Promise(resolve => setTimeout(resolve, 50));
         }
         return { success: true, data: response.data };
       } else {

@@ -1,7 +1,28 @@
 import axios from "axios";
+import { localAuthService } from "./localAuth";
+import { LANGUAGES } from "../utils/constants";
 
 // API Configuration
+// Use local storage mode by default (no backend required)
+// Set VITE_USE_API_MODE=true to use API mode, or provide VITE_API_BASE_URL
+const hasApiBaseUrl = import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.trim() !== "";
+const useApiMode = import.meta.env.VITE_USE_API_MODE === "true" || hasApiBaseUrl;
+const USE_LOCAL_MODE = !useApiMode; // Default to local mode
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://api.bolsaathi.com/api";
+
+// Log API configuration in development
+if (import.meta.env.DEV) {
+  console.log("🔧 API Configuration:", {
+    mode: USE_LOCAL_MODE ? "🔒 Local Storage Mode (No Backend)" : "🌐 API Mode",
+    baseURL: USE_LOCAL_MODE ? "N/A (Using Local Storage)" : API_BASE_URL,
+    hasApiBaseUrl: hasApiBaseUrl,
+    useApiMode: useApiMode,
+    USE_LOCAL_MODE: USE_LOCAL_MODE,
+    note: USE_LOCAL_MODE 
+      ? "✅ Authentication is handled locally using browser storage. No backend required!"
+      : "To use local mode, remove VITE_API_BASE_URL or set VITE_USE_API_MODE=false",
+  });
+}
 
 // Create axios instance
 const api = axios.create({
@@ -18,6 +39,15 @@ api.interceptors.request.use(
     const token = localStorage.getItem("authToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Log request for debugging (only in development)
+    if (import.meta.env.DEV) {
+      console.log("API Request:", {
+        method: config.method?.toUpperCase(),
+        url: config.url,
+        baseURL: config.baseURL,
+        fullURL: `${config.baseURL}${config.url}`,
+      });
     }
     return config;
   },
@@ -42,15 +72,50 @@ api.interceptors.response.use(
 
 // Error handler utility
 export const handleApiError = (error) => {
+  // Log error for debugging
+  console.error("API Error:", {
+    message: error.message,
+    response: error.response?.data,
+    status: error.response?.status,
+    request: error.request,
+    config: {
+      url: error.config?.url,
+      baseURL: error.config?.baseURL,
+      method: error.config?.method,
+    },
+  });
+
+  if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
+    return "Request timeout. The server is taking too long to respond. Please try again.";
+  }
+
   if (error.response) {
     // Server responded with error status
-    return error.response.data?.message || error.response.data?.error || "Something went wrong. Please try again.";
+    const status = error.response.status;
+    const message = error.response.data?.message || error.response.data?.error;
+    
+    if (status === 400) {
+      return message || "Invalid request. Please check your input.";
+    } else if (status === 401) {
+      return message || "Authentication failed. Please check your credentials.";
+    } else if (status === 403) {
+      return message || "Access denied. You don't have permission to perform this action.";
+    } else if (status === 404) {
+      return message || "The requested resource was not found.";
+    } else if (status === 500) {
+      return message || "Server error. Please try again later.";
+    } else {
+      return message || `Server error (${status}). Please try again.`;
+    }
   } else if (error.request) {
     // Request made but no response received
-    return "Network error. Please check your internet connection.";
+    if (error.message.includes("Network Error") || error.code === "ERR_NETWORK") {
+      return `Cannot connect to the server. Please check if the API server is running at ${API_BASE_URL}. If you're running locally, make sure the backend server is started.`;
+    }
+    return "Network error. Please check your internet connection and try again.";
   } else {
     // Error setting up request
-    return error.message || "An unexpected error occurred.";
+    return error.message || "An unexpected error occurred. Please try again.";
   }
 };
 
@@ -61,6 +126,12 @@ export const handleApiError = (error) => {
 export const authService = {
   // 1.1 Create Account
   signup: async (name, email, password) => {
+    // Use local storage mode if enabled
+    if (USE_LOCAL_MODE) {
+      return await localAuthService.signup(name, email, password);
+    }
+
+    // Otherwise, use API
     try {
       const response = await api.post("/auth/signup", {
         name,
@@ -75,6 +146,12 @@ export const authService = {
 
   // 1.2 Login User
   login: async (email, password) => {
+    // Use local storage mode if enabled
+    if (USE_LOCAL_MODE) {
+      return await localAuthService.login(email, password);
+    }
+
+    // Otherwise, use API
     try {
       const response = await api.post("/auth/login", {
         email,
@@ -88,6 +165,12 @@ export const authService = {
 
   // 1.3 Get Logged-in User
   getMe: async () => {
+    // Use local storage mode if enabled
+    if (USE_LOCAL_MODE) {
+      return await localAuthService.getMe();
+    }
+
+    // Otherwise, use API
     try {
       const response = await api.get("/auth/me");
       return { success: true, data: response.data };
@@ -104,6 +187,12 @@ export const authService = {
 export const languageService = {
   // 2.1 Get All Supported Languages
   getAllLanguages: async () => {
+    // Use local mode - return languages from constants
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: LANGUAGES };
+    }
+
+    // Otherwise, use API
     try {
       const response = await api.get("/languages");
       return { success: true, data: response.data };

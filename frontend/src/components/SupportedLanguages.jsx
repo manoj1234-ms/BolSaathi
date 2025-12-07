@@ -1,130 +1,37 @@
 import { useState, useEffect } from "react";
 import { languageService } from "../services/api";
+import { LANGUAGES } from "../utils/constants";
 
 export default function SupportedLanguages() {
   const [selectedLanguage, setSelectedLanguage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [languages, setLanguages] = useState(LANGUAGES); // Initialize with fallback languages
 
-  // Fallback languages if API fails
-  const fallbackLanguages = [
-    {
-      id: 1,
-      native: "অসমীয়া",
-      english: "Assamese",
-    },
-    {
-      id: 2,
-      native: "বাংলা",
-      english: "Bengali",
-    },
-    {
-      id: 3,
-      native: "बर'",
-      english: "Bodo",
-    },
-    {
-      id: 4,
-      native: "डोगरी",
-      english: "Dogri",
-    },
-    {
-      id: 5,
-      native: "ગુજરાતી",
-      english: "Gujarati",
-    },
-    {
-      id: 6,
-      native: "हिन्दी",
-      english: "Hindi",
-    },
-    {
-      id: 7,
-      native: "ಕನ್ನಡ",
-      english: "Kannada",
-    },
-    {
-      id: 8,
-      native: "कश्मीरी",
-      english: "Kashmiri",
-    },
-    {
-      id: 9,
-      native: "कोंकणी",
-      english: "Konkani",
-    },
-    {
-      id: 10,
-      native: "मैथिली",
-      english: "Maithili",
-    },
-    {
-      id: 11,
-      native: "മലയാളം",
-      english: "Malayalam",
-    },
-    {
-      id: 12,
-      native: "ꯃꯤꯇꯩꯂꯣꯟ",
-      english: "Manipuri",
-    },
-    {
-      id: 13,
-      native: "मराठी",
-      english: "Marathi",
-    },
-    {
-      id: 14,
-      native: "नेपाली",
-      english: "Nepali",
-    },
-    {
-      id: 15,
-      native: "ଓଡ଼ିଆ",
-      english: "Odia",
-    },
-    {
-      id: 16,
-      native: "ਪੰਜਾਬੀ",
-      english: "Punjabi",
-    },
-    {
-      id: 17,
-      native: "संस्कृतम्",
-      english: "Sanskrit",
-    },
-    {
-      id: 18,
-      native: "संताली",
-      english: "Santali",
-    },
-  ];
+  // Use LANGUAGES from constants as fallback
+  const fallbackLanguages = LANGUAGES;
 
   // Fetch languages from API
   useEffect(() => {
     const fetchLanguages = async () => {
       try {
         const response = await languageService.getAllLanguages();
-        if (response.success && response.data) {
+        if (response.success && response.data && Array.isArray(response.data) && response.data.length > 0) {
           // Transform API response to match component structure
-          const apiLanguages = Array.isArray(response.data) 
-            ? response.data.map((lang, index) => ({
-                id: lang.id || lang._id || index + 1,
-                native: lang.nativeName || lang.name || lang.native || "",
-                english: lang.englishName || lang.name || lang.english || "",
-                code: lang.code || "",
-              }))
-            : [];
+          const apiLanguages = response.data.map((lang, index) => ({
+            id: lang.id || lang._id || index + 1,
+            native: lang.nativeName || lang.name || lang.native || "",
+            english: lang.englishName || lang.name || lang.english || "",
+            code: lang.code || "",
+          }));
           
-          if (apiLanguages.length > 0) {
-            setLanguages(apiLanguages);
-          } else {
-            setLanguages(fallbackLanguages);
-          }
+          setLanguages(apiLanguages);
         } else {
+          // Use fallback languages if API fails or returns empty
           setLanguages(fallbackLanguages);
         }
       } catch (error) {
         console.error("Error fetching languages:", error);
+        // Use fallback languages on error
         setLanguages(fallbackLanguages);
       } finally {
         setLoading(false);
@@ -132,7 +39,7 @@ export default function SupportedLanguages() {
     };
 
     fetchLanguages();
-  }, []);
+  }, [fallbackLanguages]);
 
   const handleLanguageClick = (languageId) => {
     setSelectedLanguage(selectedLanguage === languageId ? null : languageId);

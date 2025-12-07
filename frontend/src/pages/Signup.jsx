@@ -62,14 +62,16 @@ const Signup = () => {
     try {
       const result = await signup(formData.name, formData.email, formData.password);
       if (result.success) {
-        // Signup successful, navigate to home
-        navigate("/", { state: { message: "Account created successfully! Welcome to BolSaathi." } });
+        // Signup successful, wait a moment for state to update then navigate to home
+        setTimeout(() => {
+          navigate("/", { replace: true, state: { message: "Account created successfully! Welcome to BolSaathi." } });
+        }, 100);
       } else {
         setError(result.error || "Signup failed");
+        setLoading(false);
       }
     } catch (err) {
       setError("An error occurred during signup");
-    } finally {
       setLoading(false);
     }
   };

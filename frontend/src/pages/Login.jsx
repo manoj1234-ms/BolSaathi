@@ -50,14 +50,16 @@ const Login = () => {
     try {
       const result = await login(formData.email, formData.password);
       if (result.success) {
-        // Login successful, navigate to home
-        navigate("/");
+        // Login successful, wait a moment for state to update then navigate to home
+        setTimeout(() => {
+          navigate("/", { replace: true });
+        }, 100);
       } else {
         setError(result.error || "Login failed");
+        setLoading(false);
       }
     } catch (err) {
       setError("An error occurred during login");
-    } finally {
       setLoading(false);
     }
   };
