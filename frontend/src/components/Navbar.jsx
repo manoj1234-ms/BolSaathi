@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Home, Layers, Languages, Info, Phone, ChevronDown, User, Menu } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import SearchBar from "./SearchBar";
 import { AuthContext } from "../context/AuthContext";
 
 const navItems = [
@@ -10,6 +11,14 @@ const navItems = [
   { name: "Languages", icon: Languages, path: "/languages", dropdown: ["Hindi", "English", "Tamil", "Bengali", "Gujarati"] },
   { name: "About", icon: Info, path: "/about", dropdown: ["Mission", "Team", "FAQ"] },
   { name: "Contact", icon: Phone, path: "/contact", dropdown: ["Email", "Phone"] }
+];
+
+const aiNavItems = [
+  { name: "AI Chat", path: "/ai-chat", icon: "💬" },
+  { name: "Translation", path: "/translation", icon: "🌐" },
+  { name: "Writing Assistant", path: "/writing-assistant", icon: "✍️" },
+  { name: "AI Games", path: "/ai-games", icon: "🎮" },
+  { name: "Help & Support", path: "/help", icon: "❓" }
 ];
 
 export default function Navbar() {
@@ -128,8 +137,34 @@ export default function Navbar() {
         })}
       </ul>
 
-      {/* Right Side - Theme Toggle, Button / User */}
+      {/* Right Side - Search, Theme Toggle, Button / User */}
       <div className="hidden md:flex items-center gap-4">
+        {/* AI Tools Dropdown - Only for logged in users */}
+        {isLoggedIn && (
+          <div className="relative group">
+            <button className="px-4 py-2 bg-gradient-to-r from-blue-400 to-purple-500 text-white rounded-lg font-semibold hover:scale-105 transition flex items-center gap-2">
+              <span>✨ AI Tools</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#0C0F1D] border border-gray-200 dark:border-white/10 rounded-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              {aiNavItems.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    navigate(item.path);
+                    setOpenMenu(null);
+                  }}
+                  className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors flex items-center gap-2"
+                >
+                  <span>{item.icon}</span>
+                  <span>{item.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        {/* Search Bar - Always visible */}
+        <SearchBar />
         {/* Theme Toggle */}
         <ThemeToggle />
         
@@ -198,8 +233,9 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Mobile - Theme Toggle & Menu Button */}
+      {/* Mobile - Search, Theme Toggle & Menu Button */}
       <div className="md:hidden flex items-center gap-3">
+        <SearchBar />
         <ThemeToggle />
         <Menu
           size={28}

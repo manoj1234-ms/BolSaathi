@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 export default function Hero() {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full min-h-[100vh] flex items-center justify-center px-4 sm:px-6 lg:px-16 relative overflow-hidden">
       <div className="flex flex-col lg:flex-row items-center gap-5 w-full max-w-7xl z-10">
@@ -17,11 +21,17 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-6 sm:mt-10">
-            <button className="bg-gradient-to-r from-blue-400 to-purple-500 px-8 py-3 rounded-full text-white font-semibold hover:scale-105 transition">
+            <button 
+              onClick={() => navigate("/lessons")}
+              className="bg-gradient-to-r from-blue-400 to-purple-500 px-8 py-3 rounded-full text-white font-semibold hover:scale-105 transition"
+            >
               Start Learning →
             </button>
 
-            <button className="px-8 py-3 rounded-full bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white border border-gray-300 dark:border-white/20 hover:bg-gray-300 dark:hover:bg-white/20 transition">
+            <button 
+              onClick={() => navigate("/features")}
+              className="px-8 py-3 rounded-full bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white border border-gray-300 dark:border-white/20 hover:bg-gray-300 dark:hover:bg-white/20 transition"
+            >
               Explore Features →
             </button>
           </div>
