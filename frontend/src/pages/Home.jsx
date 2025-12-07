@@ -5,7 +5,19 @@ import Hero from '../components/Hero'
 import FeaturesSection from '../components/FeaturesSection'
 import SupportedLanguages from '../components/SupportedLanguages'
 import RevolutionizingSection from '../components/RevolutionizingSection'
+import TestimonialsSection from '../components/TestimonialsSection'
 import ContactSection from '../components/ContactSection'
+import LiveUserCounter from '../components/LiveUserCounter'
+import FreeTrialBadge from '../components/FreeTrialBadge'
+import ExitIntentPopup from '../components/ExitIntentPopup'
+import ComparisonTable from '../components/ComparisonTable'
+import FAQSection from '../components/FAQSection'
+import HowItWorks from '../components/HowItWorks'
+import SuccessStories from '../components/SuccessStories'
+import SecurityBadges from '../components/SecurityBadges'
+import VideoDemoSection from '../components/VideoDemoSection'
+import AchievementShowcase from '../components/AchievementShowcase'
+import ReferralProgram from '../components/ReferralProgram'
 import { AuthContext } from '../context/AuthContext'
 import { TrendingUp, BookOpen, Mic, Award, Calendar, Target, Play, ArrowRight, BarChart3 } from 'lucide-react'
 
@@ -42,11 +54,14 @@ const Home = () => {
 
   return (
     <Layout>
+      {!isAuthenticated && <FreeTrialBadge />}
+      {!isAuthenticated && <LiveUserCounter />}
+      {!isAuthenticated && <ExitIntentPopup />}
       <Hero/>
       
       {/* User Dashboard Section - Only show if logged in */}
       {isAuthenticated && user && (
-        <div className="w-full px-4 sm:px-6 lg:px-16 py-12 bg-gray-50 dark:bg-[#060818]">
+        <div className="w-full px-4 sm:px-6 lg:px-16 py-12 bg-gray-50 dark:bg-[#060818] mt-16 lg:mt-24">
           <div className="max-w-7xl mx-auto">
             {/* Welcome Section */}
             <div className="mb-8">
@@ -235,9 +250,18 @@ const Home = () => {
       )}
 
       {/* Regular Sections - Always show */}
+      <HowItWorks/>
       <FeaturesSection/>
+      <VideoDemoSection/>
       <SupportedLanguages/>
+      <ComparisonTable/>
+      <AchievementShowcase/>
       <RevolutionizingSection/>
+      <SuccessStories/>
+      <TestimonialsSection/>
+      <ReferralProgram/>
+      <FAQSection/>
+      <SecurityBadges/>
       <ContactSection/>
     </Layout>
   )

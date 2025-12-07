@@ -104,7 +104,7 @@ export default function RevolutionizingSection() {
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-2">
               <Users className="w-6 h-6 text-purple-500 dark:text-purple-400" />
-              <span className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white">
+              <span className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
                 10K+
               </span>
             </div>
@@ -115,7 +115,7 @@ export default function RevolutionizingSection() {
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-2">
               <Globe className="w-6 h-6 text-blue-500 dark:text-blue-400" />
-              <span className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white">
+              <span className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
                 22
               </span>
             </div>
@@ -126,7 +126,7 @@ export default function RevolutionizingSection() {
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-2">
               <Target className="w-6 h-6 text-purple-500 dark:text-purple-400" />
-              <span className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white">
+              <span className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-teal-500">
                 98%
               </span>
             </div>

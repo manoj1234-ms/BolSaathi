@@ -1,4 +1,5 @@
 import { ArrowRight, Mic, BarChart3, Globe, Users } from "lucide-react";
+import PronunciationDemo from "./PronunciationDemo";
 
 export default function FeaturesSection() {
   const features = [
@@ -126,12 +127,26 @@ export default function FeaturesSection() {
       <div className="max-w-7xl mx-auto">
         {/* Title and Subtitle */}
         <div className="text-center mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full mb-6">
+            <span className="text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+              ✨ Powerful AI Features
+            </span>
+          </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            The intelligence layer of your learning
+            The{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+              Intelligence Layer
+            </span>{" "}
+            of Your Learning
           </h2>
           <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Boutique AI tools designed for real language mastery. Choose from our crafted, specific learning applications.
           </p>
+        </div>
+
+        {/* Interactive Demo Section */}
+        <div className="mb-16">
+          <PronunciationDemo />
         </div>
 
         {/* Feature Cards Grid */}
@@ -141,7 +156,7 @@ export default function FeaturesSection() {
             return (
               <div
                 key={feature.id}
-                className="bg-white/90 dark:bg-[#0C0F1D]/90 backdrop-blur-xl border border-gray-200 dark:border-white/5 rounded-2xl p-6 hover:border-purple-400 dark:hover:border-white/10 transition-all duration-300 hover:scale-105 shadow-xl"
+                className="group bg-white/90 dark:bg-[#0C0F1D]/90 backdrop-blur-xl border border-gray-200 dark:border-white/5 rounded-2xl p-6 hover:border-purple-400 dark:hover:border-white/10 transition-all duration-300 hover:scale-105 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20"
               >
                 {/* Graphic */}
                 <div className="mb-6">{feature.graphic}</div>
