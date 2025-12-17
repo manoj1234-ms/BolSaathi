@@ -124,55 +124,104 @@ export const handleApiError = (error) => {
 // ============================================
 
 export const authService = {
-  // 1.1 Create Account
-  signup: async (name, email, password) => {
-    // Use local storage mode if enabled
+  // 1.1 Create Account (with OTP)
+  signup: async (name, email, phone, password) => {
     if (USE_LOCAL_MODE) {
       return await localAuthService.signup(name, email, password);
     }
-
-    // Otherwise, use API
     try {
-      const response = await api.post("/auth/signup", {
-        name,
-        email,
-        password,
-      });
+      const response = await api.post("/auth/signup", { name, email, phone, password });
       return { success: true, data: response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
   },
 
-  // 1.2 Login User
+  // 1.2 Verify Signup OTP
+  verifySignupOtp: async (email, otp) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, message: "OTP verified (local mode)" };
+    }
+    try {
+      const response = await api.post("/auth/verify-signup", { email, otp });
+      return { success: true, data: response.data };
+    } catch (error) {
+      return { success: false, error: handleApiError(error) };
+    }
+  },
+
+  // 1.3 Resend Signup OTP
+  resendSignupOtp: async (email) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, message: "OTP resent (local mode)" };
+    }
+    try {
+      const response = await api.post("/auth/resend-signup-otp", { email });
+      return { success: true, data: response.data };
+    } catch (error) {
+      return { success: false, error: handleApiError(error) };
+    }
+  },
+
+  // 1.4 Login User (with OTP)
   login: async (email, password) => {
-    // Use local storage mode if enabled
     if (USE_LOCAL_MODE) {
       return await localAuthService.login(email, password);
     }
-
-    // Otherwise, use API
     try {
-      const response = await api.post("/auth/login", {
-        email,
-        password,
-      });
+      const response = await api.post("/auth/login", { email, password });
       return { success: true, data: response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
   },
 
-  // 1.3 Get Logged-in User
+  // 1.5 Verify Login OTP
+  verifyLoginOtp: async (email, otp) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, token: "local_token", user: {} };
+    }
+    try {
+      const response = await api.post("/auth/verify-login", { email, otp });
+      return { success: true, data: response.data };
+    } catch (error) {
+      return { success: false, error: handleApiError(error) };
+    }
+  },
+
+  // 1.6 Resend Login OTP
+  resendLoginOtp: async (email) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, message: "OTP resent (local mode)" };
+    }
+    try {
+      const response = await api.post("/auth/resend-login-otp", { email });
+      return { success: true, data: response.data };
+    } catch (error) {
+      return { success: false, error: handleApiError(error) };
+    }
+  },
+
+  // 1.7 Get Logged-in User
   getMe: async () => {
-    // Use local storage mode if enabled
     if (USE_LOCAL_MODE) {
       return await localAuthService.getMe();
     }
-
-    // Otherwise, use API
     try {
       const response = await api.get("/auth/me");
+      return { success: true, data: response.data.user || response.data };
+    } catch (error) {
+      return { success: false, error: handleApiError(error) };
+    }
+  },
+
+  // 1.8 Logout
+  logout: async () => {
+    if (USE_LOCAL_MODE) {
+      return { success: true };
+    }
+    try {
+      const response = await api.post("/auth/logout");
       return { success: true, data: response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
@@ -187,15 +236,12 @@ export const authService = {
 export const languageService = {
   // 2.1 Get All Supported Languages
   getAllLanguages: async () => {
-    // Use local mode - return languages from constants
     if (USE_LOCAL_MODE) {
       return { success: true, data: LANGUAGES };
     }
-
-    // Otherwise, use API
     try {
-      const response = await api.get("/languages");
-      return { success: true, data: response.data };
+      const response = await api.get("/lessons/languages");
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
@@ -203,9 +249,12 @@ export const languageService = {
 
   // 2.2 Get Lessons of One Language
   getLessonsByLanguage: async (languageId) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: [] };
+    }
     try {
-      const response = await api.get(`/lessons/${languageId}`);
-      return { success: true, data: response.data };
+      const response = await api.get(`/lessons/language/${languageId}`);
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
@@ -213,9 +262,25 @@ export const languageService = {
 
   // 2.3 Get Details of a Lesson
   getLessonDetails: async (lessonId) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: null };
+    }
     try {
-      const response = await api.get(`/lesson/${lessonId}`);
-      return { success: true, data: response.data };
+      const response = await api.get(`/lessons/${lessonId}`);
+      return { success: true, data: response.data.data || response.data };
+    } catch (error) {
+      return { success: false, error: handleApiError(error) };
+    }
+  },
+
+  // 2.4 Complete a Lesson
+  completeLesson: async (lessonId, scores, xpEarned) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: {} };
+    }
+    try {
+      const response = await api.post(`/lessons/${lessonId}/complete`, { scores, xpEarned });
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
@@ -227,39 +292,51 @@ export const languageService = {
 // ============================================
 
 export const recordingService = {
-  // 3.1 Get Upload URL for Firebase
-  getUploadUrl: async (userId, lessonId, fileExtension) => {
+  // 3.1 Get All User Recordings
+  getUserRecordings: async (language) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: [] };
+    }
     try {
-      const response = await api.post("/upload/audio", {
-        userId,
-        lessonId,
-        fileExtension, // mp3/wav
-      });
-      return { success: true, data: response.data };
+      const params = language ? { language } : {};
+      const response = await api.get("/recordings", { params });
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
   },
 
   // 3.2 Save Recording Metadata
-  saveRecording: async (userId, lessonId, audioUrl, aiFeedback) => {
+  saveRecording: async (lessonId, languageId, title, audioUrl, duration, accuracy, pronunciation, fluency, feedback, mistakes) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: {} };
+    }
     try {
-      const response = await api.post("/recordings/save", {
-        userId,
+      const response = await api.post("/recordings", {
         lessonId,
+        languageId,
+        title,
         audioUrl,
-        aiFeedback,
+        duration,
+        accuracy,
+        pronunciation,
+        fluency,
+        feedback,
+        mistakes,
       });
-      return { success: true, data: response.data };
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
   },
 
-  // 3.3 Get All User Recordings
-  getUserRecordings: async (userId) => {
+  // 3.3 Delete Recording
+  deleteRecording: async (recordingId) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true };
+    }
     try {
-      const response = await api.get(`/recordings/user/${userId}`);
+      const response = await api.delete(`/recordings/${recordingId}`);
       return { success: true, data: response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
@@ -272,29 +349,103 @@ export const recordingService = {
 // ============================================
 
 export const aiService = {
-  // 4.1 Analyze Audio & Generate Scores
-  analyzeAudio: async (audioUrl, userId, lessonId) => {
+  // 4.1 Chat with AI (Conversation Practice)
+  chat: async (userMessage, language, difficultyLevel) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: { message: "Local mode response" } };
+    }
     try {
-      const response = await api.post("/ai/analyze", {
-        audioUrl,
-        userId,
-        lessonId,
+      const response = await api.post("/chat", {
+        role: "user",
+        content: userMessage,
+        language,
+        personality: "friendly",
       });
-      return { success: true, data: response.data };
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
   },
 
-  // 4.2 Chat with AI (Conversation Practice)
-  chat: async (userMessage, language, difficultyLevel) => {
+  // 4.2 Get Chat History
+  getChatHistory: async (limit = 50) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: [] };
+    }
     try {
-      const response = await api.post("/ai/chat", {
-        userMessage,
+      const response = await api.get("/chat", { params: { limit } });
+      return { success: true, data: response.data.data || response.data };
+    } catch (error) {
+      return { success: false, error: handleApiError(error) };
+    }
+  },
+
+  // 4.3 Save Chat Message
+  saveChatMessage: async (role, content, personality, language, suggestions) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: {} };
+    }
+    try {
+      const response = await api.post("/chat", {
+        role,
+        content,
+        personality,
         language,
-        difficultyLevel,
+        suggestions,
       });
-      return { success: true, data: response.data };
+      return { success: true, data: response.data.data || response.data };
+    } catch (error) {
+      return { success: false, error: handleApiError(error) };
+    }
+  },
+};
+
+// Dashboard Service
+export const dashboardService = {
+  getDashboardStats: async () => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: {} };
+    }
+    try {
+      const response = await api.get("/dashboard");
+      return { success: true, data: response.data.data || response.data };
+    } catch (error) {
+      return { success: false, error: handleApiError(error) };
+    }
+  },
+};
+
+// Game Service
+export const gameService = {
+  saveGameScore: async (gameType, language, difficulty, score, totalQuestions, correctAnswers) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: {} };
+    }
+    try {
+      const response = await api.post("/games/score", {
+        gameType,
+        language,
+        difficulty,
+        score,
+        totalQuestions,
+        correctAnswers,
+      });
+      return { success: true, data: response.data.data || response.data };
+    } catch (error) {
+      return { success: false, error: handleApiError(error) };
+    }
+  },
+
+  getUserGameScores: async (gameType, language) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: [] };
+    }
+    try {
+      const params = {};
+      if (gameType) params.gameType = gameType;
+      if (language) params.language = language;
+      const response = await api.get("/games/scores", { params });
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
@@ -307,25 +458,31 @@ export const aiService = {
 
 export const progressService = {
   // 5.1 Get User Progress
-  getUserProgress: async (userId) => {
+  getUserProgress: async () => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: {} };
+    }
     try {
-      const response = await api.get(`/progress/${userId}`);
-      return { success: true, data: response.data };
+      const response = await api.get("/progress");
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
   },
 
   // 5.2 Update Progress After Lesson
-  updateProgress: async (userId, lessonId, scores, xpEarned) => {
+  updateProgress: async (lessonId, scores, xpEarned, languageId) => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: {} };
+    }
     try {
       const response = await api.post("/progress/update", {
-        userId,
         lessonId,
         scores,
         xpEarned,
+        languageId,
       });
-      return { success: true, data: response.data };
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
@@ -339,32 +496,25 @@ export const progressService = {
 export const badgeService = {
   // 6.1 Get All Badges
   getAllBadges: async () => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: [] };
+    }
     try {
-      const response = await api.get("/badges");
-      return { success: true, data: response.data };
+      const response = await api.get("/achievements");
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }
   },
 
   // 6.2 Get Earned Badges for User
-  getUserBadges: async (userId) => {
-    try {
-      const response = await api.get(`/badges/user/${userId}`);
-      return { success: true, data: response.data };
-    } catch (error) {
-      return { success: false, error: handleApiError(error) };
+  getUserBadges: async () => {
+    if (USE_LOCAL_MODE) {
+      return { success: true, data: { achievements: [], stats: {} } };
     }
-  },
-
-  // 6.3 Assign Badge
-  earnBadge: async (userId, badgeId) => {
     try {
-      const response = await api.post("/badges/earn", {
-        userId,
-        badgeId,
-      });
-      return { success: true, data: response.data };
+      const response = await api.get("/achievements/user");
+      return { success: true, data: response.data.data || response.data };
     } catch (error) {
       return { success: false, error: handleApiError(error) };
     }

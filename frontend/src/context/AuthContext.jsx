@@ -44,25 +44,39 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const signup = async (name, email, password) => {
+  const signup = async (userData) => {
     try {
-      const response = await authService.signup(name, email, password);
+      const { name, email, phone, password } = userData;
+      const response = await authService.signup(name, email, phone, password);
       
       if (response.success) {
-        // Store user details and token
-        if (response.data.user && response.data.token) {
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-          localStorage.setItem("authToken", response.data.token);
-          // Update state synchronously
-          setUser(response.data.user);
-          setIsAuthenticated(true);
-          // Force a small delay to ensure state is updated
-          await new Promise(resolve => setTimeout(resolve, 50));
-        }
-        return { success: true, data: response.data };
+        // OTP sent, return success to show OTP screen
+        return { success: true, message: response.data?.message || "OTP sent to your email" };
       } else {
         return { success: false, error: response.error };
       }
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const verifySignupOtp = async (email, otp) => {
+    try {
+      const response = await authService.verifySignupOtp(email, otp);
+      if (response.success) {
+        return { success: true, message: response.data?.message || "Email verified successfully" };
+      } else {
+        return { success: false, error: response.error };
+      }
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const resendSignupOtp = async (email) => {
+    try {
+      const response = await authService.resendSignupOtp(email);
+      return response;
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -73,20 +87,50 @@ export const AuthProvider = ({ children }) => {
       const response = await authService.login(email, password);
       
       if (response.success) {
-        // Store user profile and JWT token
+        // Check if OTP is needed
+        if (response.data?.needsOTP) {
+          return { success: true, needsOTP: true, message: response.data.message };
+        }
+        // If token provided directly (shouldn't happen with OTP flow)
         if (response.data.user && response.data.token) {
           localStorage.setItem("user", JSON.stringify(response.data.user));
           localStorage.setItem("authToken", response.data.token);
-          // Update state synchronously
           setUser(response.data.user);
           setIsAuthenticated(true);
-          // Force a small delay to ensure state is updated
-          await new Promise(resolve => setTimeout(resolve, 50));
         }
         return { success: true, data: response.data };
       } else {
         return { success: false, error: response.error };
       }
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const verifyLoginOtp = async (email, otp) => {
+    try {
+      const response = await authService.verifyLoginOtp(email, otp);
+      if (response.success) {
+        // Store token and user
+        if (response.data.token && response.data.user) {
+          localStorage.setItem("authToken", response.data.token);
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+          setUser(response.data.user);
+          setIsAuthenticated(true);
+        }
+        return { success: true, user: response.data.user };
+      } else {
+        return { success: false, error: response.error };
+      }
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const resendLoginOtp = async (email) => {
+    try {
+      const response = await authService.resendLoginOtp(email);
+      return response;
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -114,48 +158,12 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
-  const completeSignup = async (signupData) => {
-    try {
-      const response = await authService.signup(signupData.name, signupData.email, signupData.password);
-      
-      if (response.success) {
-        // Store user details and token
-        if (response.data.user && response.data.token) {
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-          localStorage.setItem("authToken", response.data.token);
-          setUser(response.data.user);
-          setIsAuthenticated(true);
-          await new Promise(resolve => setTimeout(resolve, 50));
-        }
-        return { success: true, data: response.data };
-      } else {
-        return { success: false, error: response.error };
-      }
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
+  const completeSignup = async (email, otp) => {
+    return await verifySignupOtp(email, otp);
   };
 
-  const completeLogin = async (email, password) => {
-    try {
-      const response = await authService.login(email, password);
-      
-      if (response.success) {
-        // Store user profile and JWT token
-        if (response.data.user && response.data.token) {
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-          localStorage.setItem("authToken", response.data.token);
-          setUser(response.data.user);
-          setIsAuthenticated(true);
-          await new Promise(resolve => setTimeout(resolve, 50));
-        }
-        return { success: true, data: response.data };
-      } else {
-        return { success: false, error: response.error };
-      }
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
+  const completeLogin = async (email, otp) => {
+    return await verifyLoginOtp(email, otp);
   };
 
   const updateUserData = (newData) => {
@@ -177,6 +185,10 @@ export const AuthProvider = ({ children }) => {
         refreshUser,
         completeSignup,
         completeLogin,
+        verifySignupOtp,
+        verifyLoginOtp,
+        resendSignupOtp,
+        resendLoginOtp,
       }}
     >
       {children}
